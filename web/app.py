@@ -121,10 +121,16 @@ def predict():
             if recommendations.startswith("Error"):
                 return jsonify({'error': 'Recommendation failed'}), 400
             
-            # Search products
+            # RAG Search: Get products and daily plan together
             parsed_recommendations = recommender.parse_recommendations(recommendations)
-            search_results = searcher.search_all_categories(parsed_recommendations)
-            formatted_results = searcher.format_search_results(search_results)
+            rag_results = searcher.search_all_categories(
+                parsed_recommendations,
+                severity=prediction_result['severity'],
+                recommendations_text=recommendations
+            )
+            
+            # Format product results
+            formatted_results = searcher.format_search_results(rag_results['products'])
             
             result = {
                 'prediction': {
@@ -132,7 +138,8 @@ def predict():
                     'confidence': round(prediction_result['confidence'], 4)
                 },
                 'recommendations': recommendations,
-                'products': formatted_results
+                'products': formatted_results,
+                'daily_plan': rag_results['daily_plan']
             }
             
             logger.info(f"Prediction successful: {prediction_result['severity']}")

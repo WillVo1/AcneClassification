@@ -36,6 +36,51 @@ class ProductSearcher:
         except Exception as e:
             self.logger.error(f"Error loading skincare data: {e}")
             self.df = pd.DataFrame()
+
+
+    def rag_search(target_ingredients, product_type, top_k=TOP_K_PRODUCTS):
+        # Convenience function for RAG search without creating a ProductSearcher instance
+        searcher = ProductSearcher()
+        return searcher.rag_search(target_ingredients, product_type, top_k)
+
+    def search_all_categories(self, ingredient_recommendations, severity=None, recommendations_text=None):
+        # RAG Search: Search products and generate daily plan using retrieved products as context
+        try:
+            results = {}
+            self.logger.info(f"Searching across {len(ingredient_recommendations)} categories")
+            
+            # Search for products in each category
+            for category, ingredients in ingredient_recommendations.items():
+                try:
+                    if ingredients:
+                        products = self.rag_search(ingredients, category)
+                        results[category] = products
+                    else:
+                        self.logger.warning(f"No ingredients provided for {category}")
+                        results[category] = []
+                except Exception as e:
+                    self.logger.error(f"Search failed for category {category}: {e}")
+                    results[category] = []
+            
+            # Generate daily plan using retrieved products (RAG component)
+            daily_plan = None
+            if severity and recommendations_text:
+                try:
+                    from .ingredient_recommendations import IngredientRecommender
+                    recommender = IngredientRecommender()
+                    daily_plan = recommender.generate_daily_plan(severity, recommendations_text, results)
+                    self.logger.info("Successfully generated daily plan as part of RAG search")
+                except Exception as e:
+                    self.logger.error(f"Failed to generate daily plan in RAG: {e}")
+                    daily_plan = f"Error generating plan: {str(e)}"
+            
+            return {
+                'products': results,
+                'daily_plan': daily_plan
+            }
+        except Exception as e:
+            self.logger.error(f"Multi-category search failed: {e}")
+            return {'products': {}, 'daily_plan': None}
     
     def rag_search(self, target_ingredients, product_type, top_k=TOP_K_PRODUCTS):
         # Search for products matching target ingredients using embedding similarity
@@ -131,28 +176,6 @@ class ProductSearcher:
             self.logger.error(f"Product scoring failed: {e}")
             return []
     
-    def search_all_categories(self, ingredient_recommendations):
-        # Search for products across all categories (cleanser, moisturizer, exfoliator)
-        try:
-            results = {}
-            self.logger.info(f"Searching across {len(ingredient_recommendations)} categories")
-            
-            for category, ingredients in ingredient_recommendations.items():
-                try:
-                    if ingredients:
-                        products = self.rag_search(ingredients, category)
-                        results[category] = products
-                    else:
-                        self.logger.warning(f"No ingredients provided for {category}")
-                        results[category] = []
-                except Exception as e:
-                    self.logger.error(f"Search failed for category {category}: {e}")
-                    results[category] = []
-            
-            return results
-        except Exception as e:
-            self.logger.error(f"Multi-category search failed: {e}")
-            return {}
     
     def format_search_results(self, search_results):
         # Format search results into readable text output
@@ -185,9 +208,3 @@ class ProductSearcher:
         except Exception as e:
             self.logger.error(f"Result formatting failed: {e}")
             return "Error formatting search results"
-
-
-def rag_search(target_ingredients, product_type, top_k=TOP_K_PRODUCTS):
-    # Convenience function for RAG search without creating a ProductSearcher instance
-    searcher = ProductSearcher()
-    return searcher.rag_search(target_ingredients, product_type, top_k)

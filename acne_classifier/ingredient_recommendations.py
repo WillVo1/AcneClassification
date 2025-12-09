@@ -98,3 +98,79 @@ class IngredientRecommender:
         except Exception as e:
             self.logger.error(f"Failed to parse recommendations: {str(e)}")
             return str(e)
+    
+    def generate_daily_plan(self, severity, ingredient_recommendations, product_results):
+        # RAG: Generate personalized daily skincare plan using retrieved products as context
+        if not self.client:
+            self.logger.error("OpenAI client not initialized")
+            return "Error: OpenAI API key not configured"
+        
+        self.logger.info(f"Generating daily plan for severity: {severity}")
+        
+        try:
+            # Build context from retrieved products
+            context = self._build_context(severity, ingredient_recommendations, product_results)
+            
+            # Generate personalized plan using LLM with retrieved context (RAG)
+            response = self.client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a dermatology expert creating personalized skincare routines. Use the provided product recommendations to create a detailed, easy-to-follow daily plan."
+                    },
+                    {
+                        "role": "user",
+                        "content": f"""Based on the following information, create a detailed daily skincare routine:
+
+                    Acne Severity: {severity}
+
+                    Recommended Ingredients:
+                    {ingredient_recommendations}
+
+                    Available Products:
+                    {context}
+
+                    Please create a comprehensive daily skincare routine with:
+                    1. Morning Routine (step-by-step)
+                    2. Evening Routine (step-by-step)
+                    3. Additional Tips specific to {severity} acne
+
+                    Be specific about which products to use when, and include the product names from the recommendations above."""
+                    }
+                ],
+                temperature=0.7,
+                max_tokens=800
+            )
+            
+            plan = response.choices[0].message.content
+            self.logger.info("Successfully generated daily skincare plan")
+            return plan
+            
+        except Exception as e:
+            self.logger.error(f"Plan generation error: {str(e)}")
+            return f"Error generating plan: {str(e)}"
+    
+    def _build_context(self, severity, ingredients, product_results):
+        # Build context string from retrieved products for RAG
+        context_parts = []
+        
+        # Add severity and ingredient context
+        context_parts.append(f"Acne Severity Level: {severity}")
+        context_parts.append(f"\nRecommended Ingredients:\n{ingredients}")
+        context_parts.append("\nRetrieved Products:\n")
+        
+        # Add product information from each category
+        for category, products in product_results.items():
+            if products:
+                context_parts.append(f"\n{category.upper()}:")
+                for i, product in enumerate(products, 1):
+                    context_parts.append(
+                        f"  {i}. {product['product_name']} "
+                        f"(Exact matches: {product['exact_matches']}, "
+                        f"Relevance: {product['combined_score']})"
+                    )
+            else:
+                context_parts.append(f"\n{category.upper()}: No specific products found")
+        
+        return '\n'.join(context_parts)

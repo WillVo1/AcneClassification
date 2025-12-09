@@ -305,6 +305,13 @@
                     </div>
                     <div class="products" id="products"></div>
                 </div>
+                
+                <div class="result-section">
+                    <div class="result-title" style="border-left-color: #17a2b8;">
+                        📅 Your Personalized Daily Skincare Plan
+                    </div>
+                    <div class="recommendations" id="dailyPlan"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -426,6 +433,9 @@
 
             // Display products
             document.getElementById('products').textContent = data.products;
+
+            // Display daily plan (RAG-generated)
+            document.getElementById('dailyPlan').textContent = data.daily_plan;
 
             // Show results section
             document.getElementById('results').style.display = 'block';
