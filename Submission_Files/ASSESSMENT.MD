@@ -34,7 +34,7 @@
 - **Points:** 10
 - **Description:** Built retrieval-augmented generation (RAG) system with document retrieval (e.g., from a static dataset/database, or from dynamic web search/scraping) and generation components
 - **Evidence:**
-  - LLM generation: ingredient_recommendations.py L21–34 -> (used to find most valuable ingredient)
+  - LLM generation: ingredient_recommendations.py L21–34 -> (used to find most valuable ingredients per category)
   - similarity retrieval: product_search.py L45–90 -> (sent to RAG to find most valuable products given ingredient from LLM)
 
 - **Points:** 5
@@ -68,6 +68,7 @@
 - **Description:** Implemented production-grade deployment (evidence of at least two considerations such as rate limiting, caching, monitoring, error handling, logging)
 - **Evidence:**
   - Thorough logging and error handling in product_search.py, prediction.py, model_loader.py, and ingredient_recommendations.py
+  - After running, should produce web/app.logs for logs
 
 ---
 
@@ -89,7 +90,7 @@
 
 - **Points:** 3
 - **Description:** Self-assessment submitted that follows guidelines for at most 15 selections in Machine Learning with evidence (note that failing to submit a self-assessment may result in a loss of credit for some overlooked rubric items during grading).
-
+- **Evidence** 10/15 rubrics marked
 ---
 
 ## Basic Documentation (2 points each)
@@ -117,6 +118,7 @@
 - **Points:** 4
 - **Description:** Demo video is of the correct length and appropriate for non-specialist audience with no code shown
                   Technical walkthrough is of the correct length and clearly explains code structure, ML techniques, and key contributions
+- **Evidence** There is no description of "correct length" in final_project.html so I am assuming less than 10 mins.
 
 ---
 
@@ -135,12 +137,14 @@
 
 - **Points:** 3
 - **Description:** README clearly articulates a single, unified project goal or research question
+- **Evidence** Goal in README
 
 - **Points:** 3
 - **Description:** Project demo video effectively communicates why the project matters to a non-technical audience in non-technical terms
 
 - **Points:** 3
 - **Description:** Project addresses a real-world problem or explores a meaningful research question
+- **Evidence** Problem in README
 
 ---
 
@@ -151,9 +155,11 @@
 
 - **Points:** 3
 - **Description:** Project shows clear progression from problem → approach → solution → evaluation
+- **Evidence** Described in demo video
 
 - **Points:** 3
 - **Description:** Design choices are explicitly justified in videos or documentation
+- **Evidence** Describ in demo video and README
 
 - **Points:** 3
 - **Description:** None of the major components awarded rubric item credit in the machine learning category are superfluous to the larger goals of the project (no unrelated "point collecting")

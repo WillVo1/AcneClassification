@@ -9,7 +9,7 @@ The following components were either contributors and my personal implementation
   - `prediction.py` - Acne severity prediction implementation
     - https://github.com/deepinsight/insightface/blob/master/python-package/insightface/app/face_analysis.py -> Help me implement Insightface
   - `ingredient_recommendations.py` - OpenAI integration for recommendations
-  - `product_search.py` - RAG-based product search system (half and half between my work and some support from AI-generated content)
+  - `product_search.py` - RAG-based product search system (half and half between my work and some support from AI-generated content) -> Described in the code
   - `config.py` - Configuration management
   - `__init__.py` - Package initialization
 
