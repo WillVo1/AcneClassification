@@ -62,7 +62,7 @@ class ProductSearcher:
                     self.logger.error(f"Search failed for category {category}: {e}")
                     results[category] = []
             
-            # Generate daily plan using retrieved products (RAG component)
+            # Generate daily plan using retrieved products - AI generated
             daily_plan = None
             if severity and recommendations_text:
                 try:
@@ -178,7 +178,7 @@ class ProductSearcher:
     
     
     def format_search_results(self, search_results):
-        # Format search results into readable text output
+        # Format search results into readable text output - AI-generated
         try:
             output = []
             

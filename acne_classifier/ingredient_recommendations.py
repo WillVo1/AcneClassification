@@ -100,7 +100,7 @@ class IngredientRecommender:
             return str(e)
     
     def generate_daily_plan(self, severity, ingredient_recommendations, product_results):
-        # RAG: Generate personalized daily skincare plan using retrieved products as context
+        # RAG: Generate personalized daily skincare plan using retrieved products as context -> AI generated Method
         if not self.client:
             self.logger.error("OpenAI client not initialized")
             return "Error: OpenAI API key not configured"
