@@ -2,23 +2,19 @@
 
 
 ### Human-Generated
-The following components were either Human Contributors and my personal implementation:
+The following components were either contributors and my personal implementation:
 
 - **Core Machine Learning Pipeline** (`acne_classifier/` modules)
   - `model_loader.py` - Model loading and initialization logic
   - `prediction.py` - Acne severity prediction implementation
     - https://github.com/deepinsight/insightface/blob/master/python-package/insightface/app/face_analysis.py -> Help me implement Insightface
   - `ingredient_recommendations.py` - OpenAI integration for recommendations
-  - `product_search.py` - RAG-based product search system
+  - `product_search.py` - RAG-based product search system (half and half between my work and some support from AI-generated content)
   - `config.py` - Configuration management
   - `__init__.py` - Package initialization
 
-- **RAG (Retrieval-Augmented Generation) Implementation**
-  - **Technology**: openai embedding Vectorization + Cosine Similarity
-  - **Implementation**: Custom scoring system
-
 - **Utility Scripts**
-  - `Install_Model.py` - Model download and setup script
+  - `Install_Model.py` - Model download and setup script -> received from https://huggingface.co/imfarzanansari/skintelligent-acne?library=transformers
   - `start.sh` - Application startup script
   - `requirements.txt` - Python dependencies
   - `README.md` - Project documentation

@@ -5,6 +5,7 @@ from .config import OPENAI_API_KEY
 
 
 def get_ingredient_recommendations(severity):
+    # Get skincare ingredient recommendations from OpenAI based on acne severity
     logger = logging.getLogger(__name__)
     
     if not OPENAI_API_KEY:
@@ -14,8 +15,10 @@ def get_ingredient_recommendations(severity):
     logger.info(f"Getting recommendations for severity: {severity}")
     
     try:
+        # Initialize OpenAI client
         client = openai.OpenAI(api_key=OPENAI_API_KEY)
         
+        # Request ingredient recommendations using GPT-3.5
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -35,11 +38,12 @@ def get_ingredient_recommendations(severity):
 
 
 def parse_ingredient_line(line):
+    # Parse a single line of ingredient recommendations into a list
     line = line.strip()
     if not line:
         return []
     
-    # Handle format like "Cleanser: ingredient1, ingredient2"
+    # Handle format like "Cleanser: ingredient1, ingredient2" or just "ingredient1, ingredient2"
     if ':' in line:
         parts = line.split(':', 1)
         if len(parts) > 1:
@@ -47,13 +51,14 @@ def parse_ingredient_line(line):
         else:
             ingredients = parts[0].strip()
     
-    # Split ingredients by comma and clean them
+    # Split comma-separated ingredients and remove whitespace
     if ingredients:
         return [ing.strip() for ing in ingredients.split(',') if ing.strip()]
     return []
 
 
-class IngredientRecommender:    
+class IngredientRecommender:
+    # Class wrapper for ingredient recommendation functionality
     def __init__(self):
         self.client = None
         self.logger = logging.getLogger(__name__)
@@ -61,6 +66,7 @@ class IngredientRecommender:
             self.client = openai.OpenAI(api_key=OPENAI_API_KEY)
     
     def get_recommendations(self, predicted_label):
+        # Get ingredient recommendations for a given severity level
         if not self.client:
             self.logger.error("OpenAI client not initialized")
             return "Error: OpenAI API key not configured"
@@ -68,6 +74,7 @@ class IngredientRecommender:
         return get_ingredient_recommendations(predicted_label)
     
     def parse_recommendations(self, recommendations_text):
+        # Parse OpenAI response into structured dictionary by product category
         try:
             parsed = {
                 'cleanser': [],
@@ -75,6 +82,7 @@ class IngredientRecommender:
                 'exfoliator': []
             }
             
+            # Process each line and categorize by product type
             lines = recommendations_text.split('\n')
             for line in lines:
                 line_lower = line.lower()

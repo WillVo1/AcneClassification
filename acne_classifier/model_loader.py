@@ -11,7 +11,8 @@ from .config import (
     FACE_DETECTION_SIZE
 )
 
-class ModelLoader:    
+class ModelLoader:
+    # Handles loading of machine learning models for acne classification
     def __init__(self):
         self.model = None
         self.processor = None
@@ -20,6 +21,7 @@ class ModelLoader:
         self.logger = logging.getLogger(__name__)
     
     def load_acne_model(self):
+        # Load the Vision Transformer model for acne severity classification
         try:
             self.logger.info("Loading acne classification model...")
             
@@ -39,15 +41,15 @@ class ModelLoader:
             with open(PREPROCESSOR_CONFIG_PATH, 'r') as f:
                 preprocessor_config = json.load(f)
             
-            # Initialize model
+            # Initialize Vision Transformer model with loaded configuration
             model_config = ViTConfig(**self.model_config_dict)
             self.model = ViTForImageClassification(config=model_config)
             
-            # Load weights
+            # Load pre-trained weights from safetensors file
             self.model.load_state_dict(load_file(MODEL_WEIGHTS_PATH))
             self.model.eval()
             
-            # Initialize processor
+            # Initialize image processor for input preprocessing
             processor_params = {
                 k: v for k, v in preprocessor_config.items() 
                 if k != 'image_processor_type'
@@ -62,9 +64,11 @@ class ModelLoader:
             raise
     
     def load_face_detection(self):
+        # Load InsightFace model for detecting and cropping faces from images
         try:
             self.logger.info("Loading face detection model...")
             
+            # Initialize InsightFace with buffalo_l model on CPU
             self.face_app = FaceAnalysis(
                 name="buffalo_l", 
                 providers=['CPUExecutionProvider']
@@ -79,6 +83,7 @@ class ModelLoader:
             raise
     
     def load_all_models(self):
+        # Load both acne classification and face detection models
         try:
             self.load_acne_model()
             self.load_face_detection()
@@ -90,5 +95,6 @@ class ModelLoader:
 
 
 def load_models():
+    # Convenience function to load all models at once
     loader = ModelLoader()
     return loader.load_all_models()

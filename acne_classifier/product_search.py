@@ -14,6 +14,7 @@ from .config import (
 
 
 class ProductSearcher:
+    # Handles RAG-based product search using embeddings and similarity matching
     def __init__(self):
         self.df = None
         self.logger = logging.getLogger(__name__)
@@ -21,6 +22,8 @@ class ProductSearcher:
         self.load_data()
     
     def load_data(self):
+        # Load skincare product database from CSV file
+        # AI-Generated L27-L38
         try:
             if not SKINCARE_DATA_PATH.exists():
                 self.logger.error(f"Skincare data file not found: {SKINCARE_DATA_PATH}")
@@ -35,6 +38,7 @@ class ProductSearcher:
             self.df = pd.DataFrame()
     
     def rag_search(self, target_ingredients, product_type, top_k=TOP_K_PRODUCTS):
+        # Search for products matching target ingredients using embedding similarity
         try:
             if self.df.empty:
                 self.logger.warning("Product database is empty")
@@ -42,13 +46,13 @@ class ProductSearcher:
             
             self.logger.info(f"Searching for {product_type} with ingredients: {target_ingredients}")
             
-            # Map product type
+            # Map user-friendly product type to database column value
             mapped_type = PRODUCT_TYPE_MAPPING.get(product_type.lower())
             if not mapped_type:
                 self.logger.error(f"Unknown product type: {product_type}")
                 return []
             
-            # Filter by product type
+            # Filter products by the specified type
             filtered_df = self.df[
                 self.df['product_type'].str.contains(mapped_type, case=False, na=False)
             ]
@@ -59,24 +63,26 @@ class ProductSearcher:
             
             self.logger.info(f"Found {len(filtered_df)} products of type {mapped_type}")
             
-            # Prepare target ingredients query
+            # Prepare target ingredients as a comma-separated query string
             target_query = ', '.join([ing.strip() for ing in target_ingredients])
             
-            # Get sentence embeddings using OpenAI
+            # Get embeddings for both product ingredients and target query
             ingredients_list = [str(ing) for ing in filtered_df['ingredients'].tolist()]
             all_texts = ingredients_list + [target_query]
-            
+
+            ## AI Generated L74-L92
+
             try:
-                # Generate embeddings 
+                # Generate embeddings using OpenAI's text-embedding model
                 response = self.client.embeddings.create(
                     model="text-embedding-3-small",
                     input=all_texts
                 )
                 
-                # Extract embeddings
+                # Extract embedding vectors from API response
                 embeddings = np.array([item.embedding for item in response.data])
                 
-                # Calculate similarity between query and products
+                # Calculate cosine similarity between query and all products
                 query_embedding = embeddings[-1:, :]
                 product_embeddings = embeddings[:-1, :]
                 
@@ -90,20 +96,21 @@ class ProductSearcher:
             self.logger.error(f"Product search failed: {e}")
             return []
         
-        # Score products
+        # Score and rank products based on similarity and exact ingredient matches
         try:
             scored_products = []
             for idx, (_, product) in enumerate(filtered_df.iterrows()):
-                # Ingredient matching score
+                # Count exact matches of target ingredients in product
                 ingredient_text = str(product['ingredients']).lower()
                 exact_matches = sum(
                     1 for ing in target_ingredients 
                     if ing.strip().lower() in ingredient_text
                 )
                 
-                # Combined score: similarity + exact matches
+                # Combine embedding similarity with exact match bonus
                 combined_score = similarities[idx] + (exact_matches * EXACT_MATCH_BONUS)
                 
+                # Filter out low-scoring products
                 if combined_score > MIN_RELEVANCE_THRESHOLD:
                     scored_products.append({
                         'product_name': product['product_name'],
@@ -115,6 +122,7 @@ class ProductSearcher:
                         'ingredients': product['ingredients']
                     })
             
+            # Sort by combined score and return top K results
             sorted_products = sorted(scored_products, key=lambda x: x['combined_score'], reverse=True)[:top_k]
             self.logger.info(f"Found {len(sorted_products)} matching products")
             return sorted_products
@@ -124,6 +132,7 @@ class ProductSearcher:
             return []
     
     def search_all_categories(self, ingredient_recommendations):
+        # Search for products across all categories (cleanser, moisturizer, exfoliator)
         try:
             results = {}
             self.logger.info(f"Searching across {len(ingredient_recommendations)} categories")
@@ -146,9 +155,11 @@ class ProductSearcher:
             return {}
     
     def format_search_results(self, search_results):
+        # Format search results into readable text output
         try:
             output = []
             
+            # Format results for each product category
             for category, products in search_results.items():
                 try:
                     category_title = category.upper()
@@ -177,5 +188,6 @@ class ProductSearcher:
 
 
 def rag_search(target_ingredients, product_type, top_k=TOP_K_PRODUCTS):
+    # Convenience function for RAG search without creating a ProductSearcher instance
     searcher = ProductSearcher()
     return searcher.rag_search(target_ingredients, product_type, top_k)

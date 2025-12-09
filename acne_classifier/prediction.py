@@ -7,21 +7,22 @@ from .config import SEVERITY_MAP, IMAGE_SIZE
 
 
 def predict_image(image_path, model, processor, face_app, model_config_dict):
+    # Main function to predict acne severity from an image using face detection and classification
     logger = logging.getLogger(__name__)
     
     try:
         logger.info(f"Starting prediction for image: {image_path}")
         
-        # Load and convert image
+        # Load and convert image to RGB format
         if isinstance(image_path, str):
             image = Image.open(image_path).convert('RGB')
         else:
             image = image_path.convert('RGB')
         
-        # Convert PIL to cv2 format for face detection
+        # Convert PIL image to numpy array for face detection
         img_rgb = np.array(image)
         
-        # Detect faces
+        # Detect faces using InsightFace
         faces = face_app.get(img_rgb)
         
         if len(faces) == 0:
@@ -30,28 +31,28 @@ def predict_image(image_path, model, processor, face_app, model_config_dict):
         
         logger.info(f"Detected {len(faces)} face(s)")
         
-        # Use the first detected face
+        # Extract bounding box coordinates from the first detected face
         face = faces[0]
         x1, y1, x2, y2 = face.bbox.astype(int)
         
-        # Validate bounding box
+        # Validate bounding box coordinates
         if x1 >= x2 or y1 >= y2:
             logger.error("Invalid face bounding box detected")
             return {'error': 'Invalid face detection'}
         
-        # Crop and resize face region
+        # Crop face region and resize to model input size
         face_crop = img_rgb[y1:y2, x1:x2]
         face_crop_resized = cv2.resize(face_crop, (IMAGE_SIZE, IMAGE_SIZE))
         face_image = Image.fromarray(face_crop_resized)
         
-        # Prepare inputs for model
+        # Preprocess face image for model input
         inputs = processor(images=face_image, return_tensors="pt")
         
-        # Run inference
+        # Run model inference without gradient computation
         with torch.no_grad():
             outputs = model(**inputs)
         
-        # Process outputs
+        # Process model outputs to get predictions and probabilities
         logits = outputs.logits
         probabilities = torch.nn.functional.softmax(logits, dim=-1)
         predicted_class_id = logits.argmax().item()
@@ -77,7 +78,8 @@ def predict_image(image_path, model, processor, face_app, model_config_dict):
         return {'error': f'Prediction failed: {str(e)}'}
 
 
-class AcnePredictor:    
+class AcnePredictor:
+    # Class wrapper for acne prediction with loaded models
     def __init__(self, model, processor, face_app, model_config_dict):
         self.model = model
         self.processor = processor
@@ -86,6 +88,7 @@ class AcnePredictor:
         self.logger = logging.getLogger(__name__)
     
     def predict(self, image_path):
+        # Predict acne severity for a single image
         try:
             return predict_image(
                 image_path, 
@@ -99,7 +102,7 @@ class AcnePredictor:
             return {'error': f'Prediction failed: {str(e)}'}
     
     def predict_batch(self, image_paths):
-        """Predict acne severity for multiple images."""
+        # Predict acne severity for multiple images in batch
         results = []
         for image_path in image_paths:
             result = self.predict(image_path)
