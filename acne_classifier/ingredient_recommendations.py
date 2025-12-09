@@ -1,9 +1,13 @@
+import logging
 import openai
 from .config import OPENAI_API_KEY
 
 
 def get_ingredient_recommendations(predicted_label):
+    logger = logging.getLogger(__name__)
+    
     if not OPENAI_API_KEY:
+        logger.error("OpenAI API key not configured")
         return "Error: OpenAI API key not configured"
     
     # Map prediction to severity for more descriptive prompt
@@ -16,6 +20,7 @@ def get_ingredient_recommendations(predicted_label):
     }
     
     severity = severity_map.get(str(predicted_label), 'unknown')
+    logger.info(f"Getting recommendations for severity: {severity}")
     
     try:
         client = openai.OpenAI(api_key=OPENAI_API_KEY)
@@ -30,9 +35,11 @@ def get_ingredient_recommendations(predicted_label):
             ]
         )
         
+        logger.info("Successfully received OpenAI recommendations")
         return response.choices[0].message.content
         
     except Exception as e:
+        logger.error(f"OpenAI API error: {str(e)}")
         return f"Error getting recommendations: {str(e)}"
 
 
@@ -58,32 +65,37 @@ def parse_ingredient_line(line):
 class IngredientRecommender:    
     def __init__(self):
         self.client = None
+        self.logger = logging.getLogger(__name__)
         if OPENAI_API_KEY:
             self.client = openai.OpenAI(api_key=OPENAI_API_KEY)
     
     def get_recommendations(self, predicted_label):
         if not self.client:
+            self.logger.error("OpenAI client not initialized")
             return "Error: OpenAI API key not configured"
         
         return get_ingredient_recommendations(predicted_label)
     
     def parse_recommendations(self, recommendations_text):
-        
-        parsed = {
-            'cleanser': [],
-            'moisturizer': [],
-            'exfoliator': []
-        }
-        
-        lines = recommendations_text.split('\n')
-        for line in lines:
-            line_lower = line.lower()
+        try:
+            parsed = {
+                'cleanser': [],
+                'moisturizer': [],
+                'exfoliator': []
+            }
             
-            if 'cleanser' in line_lower:
-                parsed['cleanser'] = parse_ingredient_line(line)
-            elif 'moisturizer' in line_lower:
-                parsed['moisturizer'] = parse_ingredient_line(line)
-            elif 'exfoliator' in line_lower:
-                parsed['exfoliator'] = parse_ingredient_line(line)
-        
-        return parsed
+            lines = recommendations_text.split('\n')
+            for line in lines:
+                line_lower = line.lower()
+                
+                if 'cleanser' in line_lower:
+                    parsed['cleanser'] = parse_ingredient_line(line)
+                elif 'moisturizer' in line_lower:
+                    parsed['moisturizer'] = parse_ingredient_line(line)
+                elif 'exfoliator' in line_lower:
+                    parsed['exfoliator'] = parse_ingredient_line(line)
+            
+            return parsed
+        except Exception as e:
+            self.logger.error(f"Failed to parse recommendations: {str(e)}")
+            return str(e)

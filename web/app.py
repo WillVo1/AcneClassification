@@ -1,11 +1,15 @@
-from flask import Flask, request, render_template, jsonify
+import logging
 import os
 import sys
 from pathlib import Path
 from werkzeug.utils import secure_filename
 import tempfile
 import traceback
+from datetime import datetime
 
+from flask import Flask, request, render_template, jsonify
+
+# Add project paths
 parent_dir = Path(__file__).parent.parent
 sys.path.append(str(parent_dir / 'acne_classifier'))
 sys.path.append(str(parent_dir))
@@ -15,37 +19,71 @@ from acne_classifier.prediction import AcnePredictor
 from acne_classifier.ingredient_recommendations import IngredientRecommender
 from acne_classifier.product_search import ProductSearcher
 
-app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 
+# Production Flask app
+app = Flask(__name__, template_folder='.')
+app.config.update(
+    MAX_CONTENT_LENGTH=16 * 1024 * 1024,
+    DEBUG=False
+)
 
+# Setup basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('app.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+# Global models
 predictor = None
 recommender = None
 searcher = None
+models_loaded = False
 
-def initialize_models():
-    """Initialize all models on startup"""
-    global predictor, recommender, searcher
+def init_models():
+    """Initialize models with error handling"""
+    global predictor, recommender, searcher, models_loaded
+    
+    if models_loaded:
+        return True
+    
     try:
-        print("Loading models...")
-        # Change to parent directory for model loading
+        logger.info("Loading models...")
         original_cwd = os.getcwd()
         os.chdir(parent_dir)
         
         model, processor, face_app, model_config_dict = load_models()
-        
-        # Change back to web directory
         os.chdir(original_cwd)
         
-        # Initialize components
         predictor = AcnePredictor(model, processor, face_app, model_config_dict)
         recommender = IngredientRecommender()
         searcher = ProductSearcher()
-        print("Models loaded successfully!")
+        
+        models_loaded = True
+        logger.info("Models loaded successfully")
         return True
     except Exception as e:
-        print(f"Error loading models: {str(e)}")
-        traceback.print_exc()
+        logger.error(f"Failed to load models: {e}")
         return False
+
+@app.errorhandler(413)
+def file_too_large(e):
+    return jsonify({'error': 'File too large (max 16MB)'}), 413
+
+@app.errorhandler(500)
+def internal_error(e):
+    logger.error(f"Internal error: {e}")
+    return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/health')
+def health():
+    """Health check endpoint"""
+    if models_loaded and predictor is not None:
+        return jsonify({'status': 'healthy', 'timestamp': datetime.utcnow().isoformat()})
+    return jsonify({'status': 'unhealthy'}), 503
 
 @app.route('/')
 def index():
@@ -54,67 +92,70 @@ def index():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
+        if not models_loaded:
+            return jsonify({'error': 'Service not ready'}), 503
+            
         if 'image' not in request.files:
-            return jsonify({'error': 'No image file provided'}), 400
+            return jsonify({'error': 'No image provided'}), 400
         
         file = request.files['image']
-        if file.filename == '':
-            return jsonify({'error': 'No image file selected'}), 400
+        if not file.filename:
+            return jsonify({'error': 'No file selected'}), 400
         
         if not file.filename.lower().endswith(('.png', '.jpg', '.jpeg')):
-            return jsonify({'error': 'Invalid file type. Please upload PNG, JPG, or JPEG images.'}), 400
+            return jsonify({'error': 'Invalid file type'}), 400
         
-        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as tmp_file:
+        # Process image
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp_file:
             file.save(tmp_file.name)
             temp_path = tmp_file.name
         
         try:
-            # Step 1: Predict acne severity
+            # Predict
             prediction_result = predictor.predict(temp_path)
-            
             if 'error' in prediction_result:
-                return jsonify({'error': f"Prediction Error: {prediction_result['error']}"}), 400
+                return jsonify({'error': prediction_result['error']}), 400
             
-            # Step 2: Get ingredient recommendations
-            recommendations_text = recommender.get_recommendations(prediction_result['predicted_label'])
+            # Get recommendations
+            recommendations = recommender.get_recommendations(prediction_result['predicted_label'])
+            if recommendations.startswith("Error"):
+                return jsonify({'error': 'Recommendation failed'}), 400
             
-            if recommendations_text.startswith("Error"):
-                return jsonify({'error': f"Recommendation Error: {recommendations_text}"}), 400
-            
-            # Step 3: Parse recommendations and search products
-            parsed_recommendations = recommender.parse_recommendations(recommendations_text)
+            # Search products
+            parsed_recommendations = recommender.parse_recommendations(recommendations)
             search_results = searcher.search_all_categories(parsed_recommendations)
             formatted_results = searcher.format_search_results(search_results)
             
-            # Format the complete result
             result = {
                 'prediction': {
                     'severity': prediction_result['severity'],
-                    'confidence': round(prediction_result['confidence'], 4),
-                    'raw_label': prediction_result['predicted_label']
+                    'confidence': round(prediction_result['confidence'], 4)
                 },
-                'recommendations': recommendations_text,
+                'recommendations': recommendations,
                 'products': formatted_results
             }
             
+            logger.info(f"Prediction successful: {prediction_result['severity']}")
             return jsonify(result)
             
         finally:
-            # Clean up temporary file
+            # Clean up
             if os.path.exists(temp_path):
                 os.unlink(temp_path)
             
     except Exception as e:
-        print(f"Prediction error: {str(e)}")
-        traceback.print_exc()
-        return jsonify({'error': f'Internal server error: {str(e)}'}), 500
+        logger.error(f"Prediction error: {e}")
+        return jsonify({'error': 'Prediction failed'}), 500
 
 if __name__ == '__main__':
-    print("Starting Acne Classification Web Application...")
+    logger.info("Starting production app...")
     
-    if not initialize_models():
-        print("Failed to load models. Exiting.")
+    if not init_models():
+        logger.error("Failed to initialize models")
         sys.exit(1)
     
-    print("Starting Flask server...")
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    # Production settings
+    port = int(os.getenv('PORT', 5000))
+    host = os.getenv('HOST', '0.0.0.0')
+    
+    app.run(host=host, port=port, debug=False)

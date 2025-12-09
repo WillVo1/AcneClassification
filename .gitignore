@@ -2,3 +2,7 @@ acne_model_inference.ipynb
 __pycache__/
 model.safetensors
 .DS_Store
+.env.prod
+/pretrain_model
+/venv
+/web/app.log

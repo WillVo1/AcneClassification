@@ -1,6 +1,6 @@
 # Skintelligent Acne Classification System
 
-A simple acne severity classification system that analyzes facial images and provides skincare product recommendations.
+A acne severity classification system that analyzes facial images and provides skincare product recommendations.
 
 ## Credits
 
@@ -16,37 +16,52 @@ A simple acne severity classification system that analyzes facial images and pro
 
 ## Installation
 
+## Production Setup
+
+To run the application in production mode:
+
+### 1. Setup Environment Variables
+Create your `.env.prod` file with the required environment variables:
 ```bash
-pip install -r requirements.txt
+OPENAI_API_KEY=your_openai_api_key_here
+FLASK_ENV=production
+PORT=9000
+HOST=0.0.0.0
 ```
 
-Set your OpenAI API key (optional):
+### 2. Download the Model
+Download the pre-trained model from Hugging Face by running:
 ```bash
-export OPENAI_API_KEY='your_key_here'
+## May take awhile
+python install_Model.py
 ```
+
+### 3. Launch Production Server
+Run the startup script to launch the production application:
+```bash
+./start.sh
+```
+
+This script does:
+- Create a virtual environment if it doesn't exist
+- Install all required dependencies
+- Load production environment variables
+- Start the server on the configured host and port
 
 ## Usage
 
-### Command Line
-```bash
-python main.py --image path/to/image.jpg
-```
-
-### Web Interface
+### Run Web Interface
 ```bash
 cd web
 python app.py
 ```
 
-Then open http://localhost:5000 in your browser.
+Then open http://localhost:[Port] in your browser.
+
+### Production Web Interface
+After running `./start.sh`, the application will be available at http://127.0.0.1/[port] (or your configured host/port).
 
 ## Requirements
-
-- Python 3.8+
-- PyTorch
-- Transformers
-- OpenCV
-- OpenAI API key (optional, for recommendations)
 
 See `requirements.txt` for complete list.
 
@@ -56,4 +71,3 @@ See `requirements.txt` for complete list.
 - **Mild**: Few comedones and papules
 - **Moderate**: Multiple papules and pustules
 - **Severe**: Numerous inflammatory lesions
-

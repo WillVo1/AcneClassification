@@ -3,9 +3,9 @@ from pathlib import Path
 
 # File paths
 PROJECT_DIR = Path(__file__).parent.parent
-MODEL_CONFIG_PATH = PROJECT_DIR / "config.json"
-PREPROCESSOR_CONFIG_PATH = PROJECT_DIR / "preprocessor_config.json"
-MODEL_WEIGHTS_PATH = PROJECT_DIR / "model.safetensors"
+MODEL_CONFIG_PATH = PROJECT_DIR / "pretrain_model/config.json"
+PREPROCESSOR_CONFIG_PATH = PROJECT_DIR / "pretrain_model/preprocessor_config.json"
+MODEL_WEIGHTS_PATH = PROJECT_DIR / "pretrain_model/model.safetensors"
 SKINCARE_DATA_PATH = PROJECT_DIR / "data/skincare_products.csv"
 
 # Model configuration
