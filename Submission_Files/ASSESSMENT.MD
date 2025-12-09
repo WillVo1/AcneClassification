@@ -1,3 +1,5 @@
+### Category 1
+
 ### Core ML Fundamentals
 
 - **Points:** 3
@@ -33,12 +35,12 @@
 - **Description:** Built retrieval-augmented generation (RAG) system with document retrieval (e.g., from a static dataset/database, or from dynamic web search/scraping) and generation components
 - **Evidence:**
   - LLM generation: ingredient_recommendations.py L21–34 -> (used to find most valuable ingredient)
-  - TF-IDF + similarity retrieval: product_search.py L45–90 -> (sent to RAG to find most valuable products given ingredient from LLM)
+  - similarity retrieval: product_search.py L45–90 -> (sent to RAG to find most valuable products given ingredient from LLM)
 
 - **Points:** 5
 - **Description:** Used sentence embeddings for semantic similarity or retrieval
 - **Evidence:**
-  - product_search.py L47–63, L66–90
+  - product_search.py L69-L84
 
 - **Points:** 5
 - **Description:** Made API calls to state-of-the-art model (GPT-4, Claude, Gemini) with meaningful integration into your system
@@ -75,3 +77,95 @@
 - **Description:** Completed project individually without a partner
 
 **Total: 72 Points :D**
+**Total Marked: 10/15**
+
+
+### Category 2 ###
+
+## Submission and Self-Assessment (3 points each)
+
+- **Points:** 3
+- **Description:** Ontime submission by 5 pm on Friday, December 5th Tuesday, December 9th (note that late submissions will be accepted but only for the normal 72 hour late period, and will not qualify for this rubric item).
+
+- **Points:** 3
+- **Description:** Self-assessment submitted that follows guidelines for at most 15 selections in Machine Learning with evidence (note that failing to submit a self-assessment may result in a loss of credit for some overlooked rubric items during grading).
+
+---
+
+## Basic Documentation (2 points each)
+
+- **Points:** 2
+- **Description:** SETUP.md exists with clear, step-by-step installation instructions
+
+- **Points:** 2
+- **Description:** ATTRIBUTION.md exists with detailed attributions of all sources including AI-generation information
+
+- **Points:** 2
+- **Description:** requirements.txt or environment.yml file is included and accurate
+
+## README.md (1 point each)
+
+- **Points:** 3
+- **Description** - README.md has What it Does section that describes in one paragraph what your project does
+                    README.md has Quick Start section that concisely explains how to run your project
+                    README.md has Video Links section with direct links to your demo and technical walkthrough videos
+
+---
+
+## Video Submissions (2 points each)
+
+- **Points:** 4
+- **Description:** Demo video is of the correct length and appropriate for non-specialist audience with no code shown
+                  Technical walkthrough is of the correct length and clearly explains code structure, ML techniques, and key contributions
+
+---
+
+## Project Workshop Days (1 points each)
+
+**Points** 2
+  -Attended 1-2 project workshop days
+  -Attended 3-4 project workshop days
+
+**Total: 21 Points :D**
+
+
+### Category 3 ###
+
+## Project Purpose and Motivation (3 points each)
+
+- **Points:** 3
+- **Description:** README clearly articulates a single, unified project goal or research question
+
+- **Points:** 3
+- **Description:** Project demo video effectively communicates why the project matters to a non-technical audience in non-technical terms
+
+- **Points:** 3
+- **Description:** Project addresses a real-world problem or explores a meaningful research question
+
+---
+
+## Technical Coherence (3 points each)
+
+- **Points:** 3
+- **Description:** Technical walkthrough demonstrates how components work together synergistically (not just isolated experiments)
+
+- **Points:** 3
+- **Description:** Project shows clear progression from problem → approach → solution → evaluation
+
+- **Points:** 3
+- **Description:** Design choices are explicitly justified in videos or documentation
+
+- **Points:** 3
+- **Description:** None of the major components awarded rubric item credit in the machine learning category are superfluous to the larger goals of the project (no unrelated "point collecting")
+
+- **Points:** 3
+- **Description:** Clean codebase with readable code and no extraneous, stale, or unused files
+
+**Total: 24 Points :D**
+
+72 / 70 -> 70
+21 / 20 -> 20
+24 / 20 -> 20
+
+**Total Score: 110 Points (Pretty Please :D)**
+

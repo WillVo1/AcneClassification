@@ -1,13 +1,15 @@
 import logging
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
+from openai import OpenAI
 from sklearn.metrics.pairwise import cosine_similarity
 from .config import (
     SKINCARE_DATA_PATH,
     PRODUCT_TYPE_MAPPING, 
     TOP_K_PRODUCTS, 
     MIN_RELEVANCE_THRESHOLD, 
-    EXACT_MATCH_BONUS
+    EXACT_MATCH_BONUS,
+    OPENAI_API_KEY
 )
 
 
@@ -15,6 +17,7 @@ class ProductSearcher:
     def __init__(self):
         self.df = None
         self.logger = logging.getLogger(__name__)
+        self.client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
         self.load_data()
     
     def load_data(self):
@@ -57,24 +60,30 @@ class ProductSearcher:
             self.logger.info(f"Found {len(filtered_df)} products of type {mapped_type}")
             
             # Prepare target ingredients query
-            target_query = ' '.join([ing.strip().lower() for ing in target_ingredients])
+            target_query = ', '.join([ing.strip() for ing in target_ingredients])
             
-            # Create TF-IDF vectors for ingredients
-            ingredients_list = [str(ing).lower() for ing in filtered_df['ingredients'].tolist()]
+            # Get sentence embeddings using OpenAI
+            ingredients_list = [str(ing) for ing in filtered_df['ingredients'].tolist()]
             all_texts = ingredients_list + [target_query]
             
             try:
-                vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 2))
-                tfidf_matrix = vectorizer.fit_transform(all_texts)
+                # Generate embeddings 
+                response = self.client.embeddings.create(
+                    model="text-embedding-3-small",
+                    input=all_texts
+                )
+                
+                # Extract embeddings
+                embeddings = np.array([item.embedding for item in response.data])
                 
                 # Calculate similarity between query and products
-                query_vector = tfidf_matrix[-1]
-                product_vectors = tfidf_matrix[:-1]
+                query_embedding = embeddings[-1:, :]
+                product_embeddings = embeddings[:-1, :]
                 
-                similarities = cosine_similarity(query_vector, product_vectors).flatten()
+                similarities = cosine_similarity(query_embedding, product_embeddings).flatten()
                 
             except Exception as e:
-                self.logger.error(f"TF-IDF computation failed: {e}")
+                self.logger.error(f"Embedding computation failed: {e}")
                 return []
                 
         except Exception as e:
@@ -92,7 +101,7 @@ class ProductSearcher:
                     if ing.strip().lower() in ingredient_text
                 )
                 
-                # Combined score: TF-IDF similarity + exact matches
+                # Combined score: similarity + exact matches
                 combined_score = similarities[idx] + (exact_matches * EXACT_MATCH_BONUS)
                 
                 if combined_score > MIN_RELEVANCE_THRESHOLD:

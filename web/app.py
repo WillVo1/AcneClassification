@@ -117,7 +117,7 @@ def predict():
                 return jsonify({'error': prediction_result['error']}), 400
             
             # Get recommendations
-            recommendations = recommender.get_recommendations(prediction_result['predicted_label'])
+            recommendations = recommender.get_recommendations(prediction_result['severity'])
             if recommendations.startswith("Error"):
                 return jsonify({'error': 'Recommendation failed'}), 400
             

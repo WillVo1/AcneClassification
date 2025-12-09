@@ -1,25 +1,16 @@
 import logging
 import openai
+import base64
 from .config import OPENAI_API_KEY
 
 
-def get_ingredient_recommendations(predicted_label):
+def get_ingredient_recommendations(severity):
     logger = logging.getLogger(__name__)
     
     if not OPENAI_API_KEY:
         logger.error("OpenAI API key not configured")
         return "Error: OpenAI API key not configured"
     
-    # Map prediction to severity for more descriptive prompt
-    severity_map = {
-        'level -1': 'clear_skin',
-        'level 0': 'very_mild', 
-        'level 1': 'mild',
-        'level 2': 'moderate',
-        'level 3': 'severe'
-    }
-    
-    severity = severity_map.get(str(predicted_label), 'unknown')
     logger.info(f"Getting recommendations for severity: {severity}")
     
     try:
@@ -30,7 +21,7 @@ def get_ingredient_recommendations(predicted_label):
             messages=[
                 {
                     "role": "user", 
-                    "content": f"For {severity} acne, pick only one ingredient that best suits severity level: 1) Cleanser 2) Moisturizer 3) Exfoliator? Provide only ingredient names separated by commas for each category. Each line should be [Category]: [Ingredient]"
+                    "content": f"For {severity} acne, pick only 1 ingredient that best suits severity level: 1) Cleanser 2) Moisturizer 3) Exfoliator? Provide only ingredient names separated by commas for each category. Each line should be [Category]: [Ingredient] (This is a plan so please make a treatment for each possible ingredient unique per severity, you are allowed to list non-acne treatment ingredients)."
                 }
             ]
         )

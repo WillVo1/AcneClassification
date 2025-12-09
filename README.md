@@ -1,73 +1,40 @@
 # Skintelligent Acne Classification System
 
-A acne severity classification system that analyzes facial images and provides skincare product recommendations.
+## Goal
+Problem: When I first got into skincare due to puberty (lots of acne), I had 0 idea what Salicylic acid or Benzoyle meant when I was reading the bottles. Oftentimes, these acne treatment ingredients are made according to the severity of the acne and I had to do a signifcant amount of research just to understand who Salicylic acid is for. It is complicated to decide what skin products (cleanser, moisturizer, exfoliators) best fit my acne severity without damaging the skin signifcantly (too much treatment is bad!).
 
-## Credits
+Goal: Due to personal experiences, I wanted to create a website that can detect the severity of your acne and find the best acne ingredients. These ingredients will significantly cut down the time for researching and finding the best suiting products without worrying about over-treatment. My product will output some suggested products given the best ingredient for your specific severity and allow you to build a skincare routine.
 
-- **Dataset**: [Skincare Products and Their Ingredients](https://www.kaggle.com/datasets/eward96/skincare-products-and-their-ingredients/data) by eward96 on Kaggle
-- **Model**: [Skintelligent Acne Classifier](https://huggingface.co/imfarzanansari/skintelligent-acne) by imfarzanansari on Hugging Face
+## What it Does
 
-## How It Works
+The Skintelligent Acne Classification System is an AI-powered skincare solution that analyzes facial images to classify acne severity and provides personalized skincare product recommendations. The system uses InsightFace for automatic face detection and cropping, employs a Vision Transformer (ViT) model from Hugging Face to classify acne severity into four categories (clear, mild, moderate, severe), generates AI-powered ingredient recommendations using OpenAI's GPT, and implements a RAG-based search system to find skincare products from a database of over 1000 products.
 
-1. **Face Detection**: Uses InsightFace to automatically detect and crop faces from uploaded images
-2. **Acne Classification**: Uses the Skintelligent Vision Transformer (ViT) model from Hugging Face to classify acne severity (clear, mild, moderate, severe)
-3. **AI Recommendations**: Generates personalized ingredient recommendations using OpenAI's GPT
-4. **Product Search**: RAG-based search system to find relevant skincare products from a database of 1000+ products
+## Quick Start
 
-## Installation
+### Prerequisites
+- Python 3.8+
+- OpenAI API key
 
-## Production Setup
+### Setup
+1. Clone the repository and navigate to the project directory
+2. Create a `.env.prod` file with your OpenAI API key:
+   ```bash
+   OPENAI_API_KEY=your_openai_api_key_here
+   FLASK_ENV=production
+   PORT=9000
+   HOST=0.0.0.0
+   ```
+3. Download the pre-trained model:
+   ```bash
+   python Install_Model.py
+   ```
+4. Launch the application:
+   ```bash
+   ./start.sh
+   ```
+5. Open your browser and navigate to `http://127.0.0.1:9000` to access the web interface
 
-To run the application in production mode:
+## Video Links
 
-### 1. Setup Environment Variables
-Create your `.env.prod` file with the required environment variables:
-```bash
-OPENAI_API_KEY=your_openai_api_key_here
-FLASK_ENV=production
-PORT=9000
-HOST=0.0.0.0
-```
-
-### 2. Download the Model
-Download the pre-trained model from Hugging Face by running:
-```bash
-## May take awhile
-python install_Model.py
-```
-
-### 3. Launch Production Server
-Run the startup script to launch the production application:
-```bash
-./start.sh
-```
-
-This script does:
-- Create a virtual environment if it doesn't exist
-- Install all required dependencies
-- Load production environment variables
-- Start the server on the configured host and port
-
-## Usage
-
-### Run Web Interface
-```bash
-cd web
-python app.py
-```
-
-Then open http://localhost:[Port] in your browser.
-
-### Production Web Interface
-After running `./start.sh`, the application will be available at http://127.0.0.1/[port] (or your configured host/port).
-
-## Requirements
-
-See `requirements.txt` for complete list.
-
-## Severity Levels
-
-- **Clear**: No visible acne
-- **Mild**: Few comedones and papules
-- **Moderate**: Multiple papules and pustules
-- **Severe**: Numerous inflammatory lesions
+- **Demo Video**: https://drive.google.com/file/d/1JRmW_77CtzUK7BCl4riSuuOROkh0mZcv/view?usp=sharing
+- **Technical Walkthrough**: https://drive.google.com/file/d/1UMjn0fB9WHOmNnyq6I8k7LtUUQjJRI8P/view?usp=sharing

@@ -1,7 +1,3 @@
-#!/bin/bash
-
-# Production startup script for Acne Classification App
-
 set -e  # Exit on any error
 
 echo "Starting Acne Classification Production App..."
