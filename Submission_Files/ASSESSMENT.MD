@@ -3,9 +3,10 @@
 - **Points:** 3
 - **Description:** Modular code design with reusable functions and classes rather than monolithic scripts
 - **Evidence:**
-  - model_loader.py L13–L70
-  - prediction.py L58–L84
-  - product_search.py L13–L76
+  - model_loader.py
+  - prediction.py
+  - product_search.py
+  - ingredient_recommendations.py
 
 ---
 
@@ -15,7 +16,7 @@
 - **Description:** Used or fine-tuned vision transformer architecture (ViT, Swin, DINO, etc.)
 - **Evidence:**
   - model_loader.py L3, L31-L37
-  - It requires the vision transformers from transformer directly to utilize the pretrain model
+  - It requires the ViT from transformer directly to utilize the pretrain model
 
 - **Points:** 5
 - **Description:** Used or fine-tuned vision convolutional neural network architecture
@@ -42,7 +43,7 @@
 - **Points:** 5
 - **Description:** Made API calls to state-of-the-art model (GPT-4, Claude, Gemini) with meaningful integration into your system
 - **Evidence:**
-  - ingredient_recommendations.py L21–34
+  - ingredient_recommendations.py L25–39
 
 ---
 
@@ -51,16 +52,15 @@
 - **Points:** 7
 - **Description:** Built multi-stage ML pipeline connecting outputs of one model to another
 - **Evidence:**
-  - Cropping: 
-  - Vision stage: prediction.py L8–L55 
-  - LLM ingredient stage: ingredient_recommendations.py L21–L34
-  - RAG retrieval stage: product_search.py L27–90
+  - Cropping: prediction.py L24-L26 (Face Analysis from Insightface model -> cropped image)
+  - Vision stage: prediction.py L45-L60 (cropped image fed into SkinIntelligence Model)
+  - LLM ingredient stage: app.py L120-L122 (SkinIntelligence Model output -> OpenAI Model generates Ingredient List)
 
 - **Points:** 10
 - **Description:** Deployed model as functional web application with user interface
 - **Evidence:**
   - app.py: L50-L120
-  - index.html: Everything
+  - index.html
 
 - **Points:** 10
 - **Description:** Implemented production-grade deployment (evidence of at least two considerations such as rate limiting, caching, monitoring, error handling, logging)
