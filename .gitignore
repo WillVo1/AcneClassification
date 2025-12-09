@@ -127,6 +127,7 @@ ehthumbs.db
 *.h5
 *.pkl
 *.joblib
+model.safetensors
 
 # Data files (if sensitive or too large)
 # *.csv
