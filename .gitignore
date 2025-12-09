@@ -6,3 +6,4 @@ model.safetensors
 /pretrain_model
 /venv
 /web/app.log
+app.log
