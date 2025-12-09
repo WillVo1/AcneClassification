@@ -7,7 +7,7 @@ Goal: Due to personal experiences, I wanted to create a website that can detect 
 
 ## What it Does
 
-The Skintelligent Acne Classification System is an AI-powered skincare solution that analyzes facial images to classify acne severity and provides personalized skincare product recommendations. The system uses InsightFace for automatic face detection and cropping, employs a Vision Transformer (ViT) model from Hugging Face to classify acne severity into four categories (clear, mild, moderate, severe), generates AI-powered ingredient recommendations using OpenAI's GPT, and implements a RAG-based search system to find skincare products from a database of over 1000 products.
+The Skintelligent Acne Classification System is an AI-powered skincare solution that analyzes facial images to classify acne severity and provides personalized skincare product recommendations. The system uses InsightFace for automatic face detection and cropping, employs a Vision Transformer (ViT) model from Hugging Face to classify acne severity into four categories (clear, mild, moderate, severe), generates AI-powered ingredient recommendations using OpenAI's GPT, and implements a RAG-based search system to find skincare products from a database of over 1000 products that will produce a day to day schedule.
 
 ## Quick Start
 
