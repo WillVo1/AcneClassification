@@ -51,7 +51,8 @@
 - **Points:** 7
 - **Description:** Built multi-stage ML pipeline connecting outputs of one model to another
 - **Evidence:**
-  - Vision stage: prediction.py L8–L55
+  - Cropping: 
+  - Vision stage: prediction.py L8–L55 
   - LLM ingredient stage: ingredient_recommendations.py L21–L34
   - RAG retrieval stage: product_search.py L27–90
 
@@ -64,7 +65,7 @@
 - **Points:** 10
 - **Description:** Implemented production-grade deployment (evidence of at least two considerations such as rate limiting, caching, monitoring, error handling, logging)
 - **Evidence:**
-  - 
+  - Thorough logging and error handling in product_search.py, prediction.py, model_loader.py, and ingredient_recommendations.py
 
 ---
 
@@ -73,4 +74,4 @@
 - **Points:** 10
 - **Description:** Completed project individually without a partner
 
-**TOTAL: 62**
+**Total: 72 Points :D**
