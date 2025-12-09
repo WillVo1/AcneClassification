@@ -100,14 +100,3 @@ class AcnePredictor:
         except Exception as e:
             self.logger.error(f"Predictor error: {str(e)}")
             return {'error': f'Prediction failed: {str(e)}'}
-    
-    def predict_batch(self, image_paths):
-        # Predict acne severity for multiple images in batch
-        results = []
-        for image_path in image_paths:
-            result = self.predict(image_path)
-            results.append({
-                'image_path': image_path,
-                'prediction': result
-            })
-        return results
