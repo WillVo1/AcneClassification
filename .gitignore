@@ -1,4 +1,4 @@
-.acne_model_inference.ipynb
+acne_model_inference.ipynb
 __pycache__/
 model.safetensors
 data/skincare_products.csv
