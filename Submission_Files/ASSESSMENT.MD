@@ -159,7 +159,7 @@
 
 - **Points:** 3
 - **Description:** Design choices are explicitly justified in videos or documentation
-- **Evidence** Describ in demo video and README
+- **Evidence** Describe in demo video and README
 
 - **Points:** 3
 - **Description:** None of the major components awarded rubric item credit in the machine learning category are superfluous to the larger goals of the project (no unrelated "point collecting")

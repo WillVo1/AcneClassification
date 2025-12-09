@@ -38,3 +38,8 @@ The Skintelligent Acne Classification System is an AI-powered skincare solution 
 
 - **Demo Video**: https://drive.google.com/file/d/1JRmW_77CtzUK7BCl4riSuuOROkh0mZcv/view?usp=sharing
 - **Technical Walkthrough**: https://drive.google.com/file/d/1UMjn0fB9WHOmNnyq6I8k7LtUUQjJRI8P/view?usp=sharing
+
+
+## Design Reasons
+
+I wanted a simple upload and receive system that can generate products and a schedule that perfectly aligns with most people. So my core principle here is convenience, thus building a website and a simple upload and click button. I was only limited to products that is available in the set and there is only so much variety that the openai model can output, so I intended to focus on single ingredients to maximize the accuracy of products I can get. When there is too many ingredients per category, it can reduce accuracy from my rag system and confuse the generated plan. So after some testing, I decided a single best ingredient was best for each category and built a system that best serve customers
