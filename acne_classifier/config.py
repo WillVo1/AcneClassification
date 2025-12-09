@@ -6,7 +6,7 @@ PROJECT_DIR = Path(__file__).parent.parent
 MODEL_CONFIG_PATH = PROJECT_DIR / "config.json"
 PREPROCESSOR_CONFIG_PATH = PROJECT_DIR / "preprocessor_config.json"
 MODEL_WEIGHTS_PATH = PROJECT_DIR / "model.safetensors"
-SKINCARE_DATA_PATH = PROJECT_DIR / "skincare_products.csv"
+SKINCARE_DATA_PATH = PROJECT_DIR / "data/skincare_products.csv"
 
 # Model configuration
 IMAGE_SIZE = 224
