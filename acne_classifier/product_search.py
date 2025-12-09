@@ -115,8 +115,6 @@ class ProductSearcher:
             ingredients_list = [str(ing) for ing in filtered_df['ingredients'].tolist()]
             all_texts = ingredients_list + [target_query]
 
-            ## AI Generated L74-L92
-
             try:
                 # Generate embeddings using OpenAI's text-embedding model
                 response = self.client.embeddings.create(
@@ -141,7 +139,7 @@ class ProductSearcher:
             self.logger.error(f"Product search failed: {e}")
             return []
         
-        # Score and rank products based on similarity and exact ingredient matches
+        # Score and rank products based on similarity and exact ingredient matches - AI generated L143 - L175
         try:
             scored_products = []
             for idx, (_, product) in enumerate(filtered_df.iterrows()):
