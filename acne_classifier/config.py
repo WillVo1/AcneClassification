@@ -22,7 +22,7 @@ SEVERITY_MAP = {
 }
 
 # API configuration
-OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE"
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 if not OPENAI_API_KEY:
     print("Warning: OPENAI_API_KEY environment variable not set")
 

@@ -129,6 +129,9 @@ ehthumbs.db
 *.joblib
 model.safetensors
 
+# Jupyter notebooks (may contain sensitive data)
+acne_model_inference.ipynb
+
 # Data files (if sensitive or too large)
 # *.csv
 # *.json
