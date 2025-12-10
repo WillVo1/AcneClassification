@@ -134,8 +134,7 @@ class IngredientRecommender:
                     Please create a comprehensive daily skincare routine with:
                     1. Morning Routine (step-by-step)
                     2. Evening Routine (step-by-step)
-                    3. Additional Tips specific to {severity} acne
-
+                    
                     Be specific about which products to use when, and include the product names from the recommendations above."""
                     }
                 ],

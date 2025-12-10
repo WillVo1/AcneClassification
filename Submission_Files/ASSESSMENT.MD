@@ -35,7 +35,7 @@
 - **Description:** Built retrieval-augmented generation (RAG) system with document retrieval (e.g., from a static dataset/database, or from dynamic web search/scraping) and generation components
 - **Evidence:**
   - LLM generation: ingredient_recommendations.py L21–34 -> (used to find most valuable ingredients per category)
-  - similarity retrieval: product_search.py L45–90 -> (sent to RAG to find most valuable products given ingredient from LLM)
+  - similarity retrieval: product_search.py L129–L140 -> (sent to RAG to find most valuable products given ingredient from LLM)
 
 - **Points:** 5
 - **Description:** Used sentence embeddings for semantic similarity or retrieval

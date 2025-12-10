@@ -1,3 +1,9 @@
+# GRADER
+
+I made some last minute changes, please redownload the Assessment! RAG System enquired changes that are not reflected in the video! I added last step API call at the end to make a daily plan for each user with the products -> I created this to reflect the RAG system due to some misunderstanding of my orignal RAG System and system errors that I have been struggling with since last week.
+Thank you!
+
+
 # Skintelligent Acne Classification System
 
 ## Goal
